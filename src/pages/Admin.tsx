@@ -353,7 +353,7 @@ export const AdminProducts: React.FC = () => {
     const p = { ...editing };
     if (typeof p.images === 'string') p.images = p.images.split(',').map((s: string) => s.trim()).filter(Boolean);
     if (typeof p.tags === 'string') p.tags = p.tags.split(',').map((s: string) => s.trim()).filter(Boolean);
-    p.price = Math.round(Number(p.price));
+    p.price = Math.round(Number(p.price) * 100);
     p.inventory_qty = Number(p.inventory_qty) || 0;
     if (p.new_arrival === undefined) p.new_arrival = false;
     p.new_arrival = Boolean(p.new_arrival);
@@ -406,8 +406,8 @@ export const AdminProducts: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="product-price" className="block text-sm font-semibold mb-1">Price (cents)</label>
-            <input id="product-price" required type="number" placeholder="Price (cents)" value={editing.price} onChange={(e) => setEditing({ ...editing, price: e.target.value })} className="border px-3 py-2 w-full" />
+            <label htmlFor="product-price" className="block text-sm font-semibold mb-1">Price (USD)</label>
+            <input id="product-price" required type="number" step="0.01" placeholder="Price (USD)" value={editing.price} onChange={(e) => setEditing({ ...editing, price: e.target.value })} className="border px-3 py-2 w-full" />
           </div>
 
           <div>
