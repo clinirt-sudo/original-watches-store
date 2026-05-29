@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import Logo from '@/components/Logo';
-import { LogOut, LayoutDashboard, Package, ShoppingCart, MessageSquare, Users, Settings } from 'lucide-react';
+import { LogOut, LayoutDashboard, Package, ShoppingCart, MessageSquare, Users, Settings, Menu, X } from 'lucide-react';
 
 const ADMIN_KEY_STORAGE = 'ows_admin_session';
 
@@ -75,30 +75,65 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     navigate('/admin');
   };
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => (
+    <div className="bg-[#0A0A0A] text-white flex flex-col h-full">
+      <div className="p-5 border-b border-white/10 flex items-center justify-between">
+        <Logo variant="light" showTagline={false} />
+        <button onClick={() => setSidebarOpen(false)} className="md:hidden text-white p-2 rounded-md hover:bg-white/5">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <nav className="flex-1 py-4">
+        {nav.map((n) => (
+          <Link
+            key={n.to}
+            to={n.to}
+            onClick={() => onNavigate && onNavigate()}
+            className={`flex items-center gap-3 px-5 py-3 text-sm hover:bg-white/5 transition-colors ${
+              location.pathname === n.to ? 'bg-[#D4AF37]/10 border-r-2 border-[#D4AF37] text-[#D4AF37]' : ''
+            }`}
+          >
+            <n.icon className="w-4 h-4" /> {n.label}
+          </Link>
+        ))}
+      </nav>
+      <button onClick={logout} className="flex items-center gap-3 px-5 py-4 text-sm border-t border-white/10 hover:bg-white/5">
+        <LogOut className="w-4 h-4" /> Logout
+      </button>
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex bg-[#FAFAF8]">
-      <aside className="w-60 bg-[#0A0A0A] text-white flex flex-col">
-        <div className="p-5 border-b border-white/10">
-          <Logo variant="light" showTagline={false} />
-        </div>
-        <nav className="flex-1 py-4">
-          {nav.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              className={`flex items-center gap-3 px-5 py-3 text-sm hover:bg-white/5 transition-colors ${
-                location.pathname === n.to ? 'bg-[#D4AF37]/10 border-r-2 border-[#D4AF37] text-[#D4AF37]' : ''
-              }`}
-            >
-              <n.icon className="w-4 h-4" /> {n.label}
-            </Link>
-          ))}
-        </nav>
-        <button onClick={logout} className="flex items-center gap-3 px-5 py-4 text-sm border-t border-white/10 hover:bg-white/5">
-          <LogOut className="w-4 h-4" /> Logout
-        </button>
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-60">
+        <SidebarContent />
       </aside>
-      <main className="flex-1 p-8 overflow-x-auto">{children}</main>
+
+      {/* Mobile drawer */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
+          <div className="absolute left-0 top-0 bottom-0 w-64">
+            <SidebarContent onNavigate={() => setSidebarOpen(false)} />
+          </div>
+        </div>
+      )}
+
+      <div className="flex-1 flex flex-col">
+        <header className="md:hidden bg-white/0 border-b border-gray-100 p-3 flex items-center">
+          <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-md mr-3">
+            <Menu className="w-6 h-6 text-gray-700" />
+          </button>
+          <div className="flex-1">
+            {/* small header area, could show current section */}
+          </div>
+        </header>
+
+        <main className="flex-1 p-4 md:p-8 overflow-x-auto">{children}</main>
+      </div>
     </div>
   );
 };
