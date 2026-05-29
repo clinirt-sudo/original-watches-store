@@ -1,6 +1,11 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/*", "destination": "/index.html" }
+    { "source": "/admin", "destination": "/index.html" },
+    { "source": "/admin/(.*)", "destination": "/index.html" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/_next/static/(.*)", "destination": "/_next/static/$1" },
+    { "source": "/(.*\\.(?:js|css|png|jpg|jpeg|svg|ico|json|map|txt|woff2|woff|ttf|eot))", "destination": "/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
