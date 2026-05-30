@@ -40,7 +40,7 @@ const CartPage: React.FC = () => {
                     <img src={item.image} alt={item.name} className="w-20 h-20 object-cover bg-gray-50" />
                     <div>
                       <p className="text-[10px] uppercase tracking-wider text-gray-500">{item.brand}</p>
-                      <Link to={`/product/${item.handle}`} className="font-medium hover:text-[#D4AF37]">{item.name}</Link>
+                      <Link to={`/product/${encodeURIComponent(item.handle)}`} className="font-medium hover:text-[#D4AF37]">{item.name}</Link>
                       <p className="text-sm font-semibold mt-1 md:hidden">{format(item.price)}</p>
                     </div>
                   </div>

@@ -49,7 +49,7 @@ const CartDrawer: React.FC = () => {
                 <div className="flex-1 overflow-y-auto p-5 space-y-5">
                   {items.map((item) => (
                     <div key={item.product_id + (item.variant_id || '')} className="flex gap-4">
-                      <Link to={`/product/${item.handle}`} onClick={closeCart}>
+                      <Link to={`/product/${encodeURIComponent(item.handle)}`} onClick={closeCart}>
                         <img
                           src={item.image}
                           alt={item.name}
@@ -58,7 +58,7 @@ const CartDrawer: React.FC = () => {
                       </Link>
                       <div className="flex-1 min-w-0">
                         <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-0.5">{item.brand}</p>
-                        <Link to={`/product/${item.handle}`} onClick={closeCart} className="text-sm font-medium line-clamp-2 hover:text-[#D4AF37] transition-colors">
+                        <Link to={`/product/${encodeURIComponent(item.handle)}`} onClick={closeCart} className="text-sm font-medium line-clamp-2 hover:text-[#D4AF37] transition-colors">
                           {item.name}
                         </Link>
                         <p className="text-sm font-semibold mt-1">{format(item.price)}</p>

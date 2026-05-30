@@ -39,7 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
       transition={{ duration: 0.5, delay: (index % 4) * 0.08 }}
       className="group"
     >
-      <Link to={`/product/${product.handle}`} className="block">
+      <Link to={`/product/${encodeURIComponent(product.handle)}`} className="block">
         <div className="relative bg-white overflow-hidden mb-4">
           {displayDiscount > 0 && (
             <span className="absolute top-3 left-3 z-10 bg-[#059669] text-white text-xs font-bold px-2 py-1 rounded">

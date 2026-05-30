@@ -168,7 +168,7 @@ const Header: React.FC = () => {
                     {suggestions.map((s) => (
                       <Link
                         key={s.id}
-                        to={`/product/${s.handle}`}
+                        to={`/product/${encodeURIComponent(s.handle)}`}
                         className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors"
                         onClick={() => setShowSuggestions(false)}
                       >

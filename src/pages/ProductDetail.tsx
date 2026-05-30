@@ -18,6 +18,15 @@ const SPEC_LABELS: Record<string, string> = {
 
 const ProductDetail: React.FC = () => {
   const { slug } = useParams();
+  const safeSlug = slug
+    ? (() => {
+        try {
+          return decodeURIComponent(slug).replace(/\+/g, ' ');
+        } catch {
+          return slug.replace(/\+/g, ' ');
+        }
+      })()
+    : '';
   const navigate = useNavigate();
   const { addItem, format, currency, setCurrency, openCart } = useCart();
   const [product, setProduct] = useState<any>(null);
@@ -27,14 +36,14 @@ const ProductDetail: React.FC = () => {
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
-    if (!slug) return;
+    if (!safeSlug) return;
     setLoading(true);
     setActiveImg(0);
     setQty(1);
     supabase
       .from('ecom_products')
       .select('*')
-      .eq('handle', slug)
+      .eq('handle', safeSlug)
       .single()
       .then(async ({ data }) => {
         setProduct(data);
