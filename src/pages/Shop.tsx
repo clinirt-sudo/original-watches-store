@@ -23,6 +23,7 @@ const Shop: React.FC<ShopProps> = ({ brandHandle: brandProp }) => {
   const [sort, setSort] = useState('newest');
   const [priceMax, setPriceMax] = useState(200000);
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
   const [page, setPage] = useState(1);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -34,11 +35,14 @@ const Shop: React.FC<ShopProps> = ({ brandHandle: brandProp }) => {
       let pq = supabase.from('ecom_products').select('*').eq('status', 'active');
 
       if (brandHandle) {
-        const { data: col } = await supabase
+        const { data: col, error: colError } = await supabase
           .from('ecom_collections')
           .select('*')
           .eq('handle', brandHandle)
           .single();
+
+        const vendorName = brandHandle.replace(/-/g, ' ');
+
         if (col) {
           setCollection(col);
           const { data: links } = await supabase
@@ -46,14 +50,20 @@ const Shop: React.FC<ShopProps> = ({ brandHandle: brandProp }) => {
             .select('product_id')
             .eq('collection_id', col.id);
           const ids = (links || []).map((l) => l.product_id);
-          if (ids.length) pq = pq.in('id', ids);
-          else {
-            setProducts([]);
+          if (ids.length) {
+            pq = pq.in('id', ids);
+          } else {
+            const { data: vendorProducts } = await supabase
+              .from('ecom_products')
+              .select('*')
+              .eq('status', 'active')
+              .ilike('vendor', `%${vendorName}%`);
+            setCollection({ title: vendorName });
+            setProducts(vendorProducts || []);
             setLoading(false);
             return;
           }
         } else {
-          const vendorName = brandHandle.replace(/-/g, ' ');
           const { data: vendorProducts } = await supabase
             .from('ecom_products')
             .select('*')
@@ -83,6 +93,12 @@ const Shop: React.FC<ShopProps> = ({ brandHandle: brandProp }) => {
     return Array.from(cats);
   }, [products]);
 
+  const vendors = useMemo(() => {
+    const unique = new Set<string>();
+    products.forEach((p) => p.vendor && unique.add(p.vendor));
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  }, [products]);
+
   const filtered = useMemo(() => {
     let list = [...products];
     if (queryParam) {
@@ -94,6 +110,7 @@ const Shop: React.FC<ShopProps> = ({ brandHandle: brandProp }) => {
       );
     }
     if (selectedCats.length) list = list.filter((p) => selectedCats.includes(p.product_type));
+    if (selectedBrands.length) list = list.filter((p) => selectedBrands.includes(p.vendor));
     list = list.filter((p) => p.price <= priceMax * 100);
     if (onSaleOnly) list = list.filter((p) => p.tags?.includes('sale'));
     switch (sort) {
@@ -184,6 +201,29 @@ const Shop: React.FC<ShopProps> = ({ brandHandle: brandProp }) => {
                 </div>
               )}
 
+              {vendors.length > 0 && (
+                <div className="mb-8">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider mb-4 text-[#D4AF37]">
+                    Brands
+                  </h4>
+                  <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    {vendors.map((vendor) => (
+                      <label key={vendor} className="flex items-center gap-2 text-sm cursor-pointer hover:text-[#D4AF37]">
+                        <input
+                          type="checkbox"
+                          checked={selectedBrands.includes(vendor)}
+                          onChange={() => setSelectedBrands((prev) =>
+                            prev.includes(vendor) ? prev.filter((x) => x !== vendor) : [...prev, vendor]
+                          )}
+                          className="accent-[#D4AF37]"
+                        />
+                        {vendor}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="mb-8">
                 <h4 className="text-sm font-semibold uppercase tracking-wider mb-4 text-[#D4AF37]">
                   Price Range
@@ -221,6 +261,7 @@ const Shop: React.FC<ShopProps> = ({ brandHandle: brandProp }) => {
               <button
                 onClick={() => {
                   setSelectedCats([]);
+                  setSelectedBrands([]);
                   setPriceMax(200000);
                   setOnSaleOnly(false);
                 }}
