@@ -332,7 +332,7 @@ const Header: React.FC = () => {
                 <Link to="/account" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-sm py-2">
                   <User className="w-4 h-4" /> My Account
                 </Link>
-                <a href="https://t.me/originalwatchesshop" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm py-2 text-[#D4AF37]">
+                <a href="https://t.me/Originalwatches90" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm py-2 text-[#D4AF37]">
                   Telegram Support
                 </a>
               </div>

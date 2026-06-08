@@ -28,8 +28,8 @@ export const About: React.FC = () => (
 export const Contact: React.FC = () => {
   const [settings, setSettings] = useState<any>({
     whatsapp: '+1 (541) 780-8979',
-    email: 'sales@originalwatches.shop',
-    telegram_url: 'https://t.me/originalwatchesshop',
+    email: 'watchesoriginal90@gmail.com',
+    telegram_url: 'https://t.me/Originalwatches90',
   });
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [loading, setLoading] = useState(false);
@@ -91,7 +91,7 @@ export const Contact: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-wider text-gray-500">Telegram</p>
-                  <p className="font-medium">@originalwatchesshop</p>
+                  <p className="font-medium">@Originalwatches90</p>
                 </div>
               </a>
               <div className="flex items-center gap-4">
@@ -183,7 +183,7 @@ export const RefundPolicy = () => (
     'Your satisfaction is our highest priority. We offer a 30-day return policy on all unworn timepieces.',
     'To be eligible for a return, the watch must be unworn, in its original packaging, with all tags, documentation, and accessories included.',
     'Custom orders, engraved watches, and personalized pieces are non-refundable.',
-    'To initiate a return, contact our concierge team at sales@originalwatches.shop within 30 days of delivery. We will provide return shipping instructions and a prepaid label for orders over $5,000.',
+    'To initiate a return, contact our concierge team at watchesoriginal90@gmail.com within 30 days of delivery. We will provide return shipping instructions and a prepaid label for orders over $5,000.',
     'Refunds are processed within 5-7 business days after we receive and authenticate the returned item.',
   ]} />
 );

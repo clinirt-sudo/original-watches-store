@@ -9,7 +9,7 @@ const FloatingButtons: React.FC = () => {
   return (
     <>
       <a
-        href="https://t.me/originalwatchesshop"
+        href="https://t.me/Originalwatches90"
         target="_blank"
         rel="noreferrer"
         className="fixed bottom-6 left-6 z-40 flex items-center gap-2 group"

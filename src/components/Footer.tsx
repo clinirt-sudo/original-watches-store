@@ -133,7 +133,7 @@ const Footer: React.FC = () => {
             <a href="#" className="hover:text-[#D4AF37] transition-colors"><Facebook className="w-4 h-4" /></a>
             <a href="#" className="hover:text-[#D4AF37] transition-colors"><Twitter className="w-4 h-4" /></a>
             <a href="#" className="hover:text-[#D4AF37] transition-colors"><Youtube className="w-4 h-4" /></a>
-            <a href="mailto:sales@originalwatches.shop" className="hover:text-[#D4AF37] transition-colors"><Mail className="w-4 h-4" /></a>
+            <a href="mailto:watchesoriginal90@gmail.com" className="hover:text-[#D4AF37] transition-colors"><Mail className="w-4 h-4" /></a>
           </div>
           <div className="flex items-center gap-3 text-xs text-gray-500">
             <span>VISA</span><span>•</span><span>Mastercard</span><span>•</span><span>Amex</span><span>•</span><span>Crypto</span>
