@@ -26,10 +26,12 @@ export const About: React.FC = () => (
 );
 
 export const Contact: React.FC = () => {
+  const EMAIL = 'watchesoriginal90@gmail.com';
+  const TELEGRAM_URL = 'https://t.me/Originalwatches90';
+  const TELEGRAM_HANDLE = '@Originalwatches90';
+
   const [settings, setSettings] = useState<any>({
     whatsapp: '+1 (541) 780-8979',
-    email: 'watchesoriginal90@gmail.com',
-    telegram_url: 'https://t.me/Originalwatches90',
   });
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [loading, setLoading] = useState(false);
@@ -76,22 +78,22 @@ export const Contact: React.FC = () => {
                   <p className="font-medium">{settings.whatsapp}</p>
                 </div>
               </a>
-              <a href={`mailto:${settings.email}`} className="flex items-center gap-4 group">
+              <a href={`mailto:${EMAIL}`} className="flex items-center gap-4 group">
                 <div className="w-12 h-12 rounded-full bg-[#FAFAF8] flex items-center justify-center group-hover:bg-[#D4AF37] group-hover:text-white transition-colors">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-wider text-gray-500">Email</p>
-                  <p className="font-medium">{settings.email}</p>
+                  <p className="font-medium">{EMAIL}</p>
                 </div>
               </a>
-              <a href={settings.telegram_url} target="_blank" rel="noreferrer" className="flex items-center gap-4 group">
+              <a href={TELEGRAM_URL} target="_blank" rel="noreferrer" className="flex items-center gap-4 group">
                 <div className="w-12 h-12 rounded-full bg-[#FAFAF8] flex items-center justify-center group-hover:bg-[#D4AF37] group-hover:text-white transition-colors">
                   <Send className="w-5 h-5" />
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-wider text-gray-500">Telegram</p>
-                  <p className="font-medium">@Originalwatches90</p>
+                  <p className="font-medium">{TELEGRAM_HANDLE}</p>
                 </div>
               </a>
               <div className="flex items-center gap-4">
