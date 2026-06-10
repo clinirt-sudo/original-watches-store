@@ -20,7 +20,7 @@ const Checkout: React.FC = () => {
   const navigate = useNavigate();
   const { items, subtotalCents, format, clearCart } = useCart();
   const [settings, setSettings] = useState<any>({
-    whatsapp: '+1 (541) 780-8979',
+    whatsapp: '+447414512857',
     email: 'watchesoriginal90@gmail.com',
     shipping_fee: 4809,
   });

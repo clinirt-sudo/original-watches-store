@@ -31,7 +31,7 @@ export const Contact: React.FC = () => {
   const TELEGRAM_HANDLE = '@Originalwatches90';
 
   const [settings, setSettings] = useState<any>({
-    whatsapp: '+1 (541) 780-8979',
+    whatsapp: '+447414512857',
   });
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [loading, setLoading] = useState(false);
