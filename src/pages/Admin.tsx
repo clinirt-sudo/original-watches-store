@@ -42,9 +42,6 @@ export const AdminLogin: React.FC = () => {
           <button className="w-full bg-[#059669] hover:bg-[#047857] text-white py-3 text-sm uppercase tracking-wider font-semibold">
             Sign in
           </button>
-          <p className="text-xs text-gray-500 text-center mt-4">
-            Demo password: admin123
-          </p>
         </form>
       </div>
     </div>
