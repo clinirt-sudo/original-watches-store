@@ -21,10 +21,14 @@ const customFetch: typeof fetch = async (input, init) => {
   return fetch(normalizedUrl, init);
 };
 
-// Initialize database client
-const supabaseUrl = 'https://vxxqfscppyianbqkkllr.databasepad.com';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjJiZWM2OTM4LWJiYTQtNGMyNS04ZmQwLThhOWUxOTE5NTNjZCJ9.eyJwcm9qZWN0SWQiOiJ2eHhxZnNjcHB5aWFuYnFra2xsciIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc5MTExNzc0LCJleHAiOjIwOTQ0NzE3NzQsImlzcyI6ImZhbW91cy5kYXRhYmFzZXBhZCIsImF1ZCI6ImZhbW91cy5jbGllbnRzIn0.3xJYSKJ9pLajFZ-P6RUnLedCwoev5eYQKtXcOi73638';
-const supabase = createClient(supabaseUrl, supabaseKey, {
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? '';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? '';
+
+if (!supabaseUrl || !supabaseKey) {
+  console.warn('[supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. Add them to .env.local before running the app.');
+}
+
+const supabase = createClient(supabaseUrl || 'https://example.supabase.co', supabaseKey || 'placeholder-anon-key', {
   global: {
     fetch: customFetch,
   },
