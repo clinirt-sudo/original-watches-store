@@ -21,14 +21,11 @@ const customFetch: typeof fetch = async (input, init) => {
   return fetch(normalizedUrl, init);
 };
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? '';
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? '';
+// Initialize database client
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.warn('[supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. Add them to .env.local before running the app.');
-}
-
-const supabase = createClient(supabaseUrl || 'https://example.supabase.co', supabaseKey || 'placeholder-anon-key', {
+const supabase = createClient(supabaseUrl, supabaseKey, {
   global: {
     fetch: customFetch,
   },
