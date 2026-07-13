@@ -8,10 +8,18 @@
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import ws from 'ws';
+import dotenv from 'dotenv';
 
-// Supabase credentials (new project)
-const supabaseUrl = 'https://ulculguzvdvdzimkucjb.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsY3VsZ3V6dmR2ZHppbWt1Y2piIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzQyNDUsImV4cCI6MjA5OTM1MDI0NX0.DeO80reLV1k-Ubavl_dVoGVxPYjmTfeUgGJQpWWPeyM';
+dotenv.config({ path: '.env.local' });
+
+// Supabase credentials (from .env.local)
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in .env.local');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
   realtime: {
