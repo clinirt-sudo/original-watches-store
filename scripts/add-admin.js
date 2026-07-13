@@ -7,12 +7,17 @@
 
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 
-// Supabase credentials (same as in src/lib/supabase.ts)
-const supabaseUrl = 'https://vxxqfscppyianbqkkllr.databasepad.com';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjJiZWM2OTM4LWJiYTQtNGMyNS04ZmQwLThhOWUxOTE5NTNjZCJ9.eyJwcm9qZWN0SWQiOiJ2eHhxZnNjcHB5aWFuYnFra2xsciIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc5MTExNzc0LCJleHAiOjIwOTQ0NzE3NzQsImlzcyI6ImZhbW91cy5kYXRhYmFzZXBhZCIsImF1ZCI6ImZhbW91cy5jbGllbnRzIn0.3xJYSKJ9pLajFZ-P6RUnLedCwoev5eYQKtXcOi73638';
+// Supabase credentials (new project)
+const supabaseUrl = 'https://ulculguzvdvdzimkucjb.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsY3VsZ3V6dmR2ZHppbWt1Y2piIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3NzQyNDUsImV4cCI6MjA5OTM1MDI0NX0.DeO80reLV1k-Ubavl_dVoGVxPYjmTfeUgGJQpWWPeyM';
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  realtime: {
+    transport: ws,
+  },
+});
 
 // Simple hash function using SHA256 (better security with bcrypt, but this is portable)
 function hashPassword(password) {
