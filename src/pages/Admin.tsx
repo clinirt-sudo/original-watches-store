@@ -8,6 +8,10 @@ import { LogOut, LayoutDashboard, Package, ShoppingCart, MessageSquare, Users, S
 const ADMIN_KEY_STORAGE = 'ows_admin_session';
 const ADMIN_SALT = 'admin_salt_2024';
 
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '';
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '';
+const CLOUDINARY_FOLDER = import.meta.env.VITE_CLOUDINARY_FOLDER || 'original-watches';
+
 function toHexString(buffer: ArrayBuffer): string {
   return Array.from(new Uint8Array(buffer))
     .map((b) => b.toString(16).padStart(2, '0'))
@@ -100,6 +104,48 @@ async function hashPassword(password: string): Promise<string> {
   }
 
   return sha256Fallback(message);
+}
+
+function normalizeImageList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  if (typeof value === 'string') {
+    return value.split(',').map((item) => item.trim()).filter(Boolean);
+  }
+
+  return [];
+}
+
+async function uploadImagesToCloudinary(files: File[]): Promise<string[]> {
+  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+    throw new Error('Cloudinary upload is not configured. Add VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET to your environment.');
+  }
+
+  const uploadedUrls: string[] = [];
+
+  for (const file of files) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    formData.append('folder', CLOUDINARY_FOLDER);
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.secure_url) {
+      throw new Error(data.error?.message || 'Image upload failed.');
+    }
+
+    uploadedUrls.push(data.secure_url);
+  }
+
+  return uploadedUrls;
 }
 
 export const AdminLogin: React.FC = () => {
@@ -487,6 +533,7 @@ export const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [editing, setEditing] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   const load = () => {
     supabase.from('ecom_products').select('*').order('created_at', { ascending: false }).then(({ data }) => setProducts(data || []));
@@ -499,10 +546,29 @@ export const AdminProducts: React.FC = () => {
     load();
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    setUploadingImages(true);
+    try {
+      const uploadedUrls = await uploadImagesToCloudinary(files);
+      const currentImages = normalizeImageList(editing?.images);
+      const nextImages = [...currentImages, ...uploadedUrls];
+      setEditing({ ...editing, images: nextImages });
+      toast.success(`${uploadedUrls.length} image${uploadedUrls.length > 1 ? 's' : ''} uploaded`);
+    } catch (error) {
+      toast.error('Image upload failed', { description: error instanceof Error ? error.message : 'Unknown error' });
+    } finally {
+      setUploadingImages(false);
+      e.target.value = '';
+    }
+  };
+
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     const p = { ...editing };
-    if (typeof p.images === 'string') p.images = p.images.split(',').map((s: string) => s.trim()).filter(Boolean);
+    p.images = normalizeImageList(p.images);
     if (typeof p.tags === 'string') p.tags = p.tags.split(',').map((s: string) => s.trim()).filter(Boolean);
     p.price = Math.round(Number(p.price) * 100);
     p.inventory_qty = Number(p.inventory_qty) || 0;
@@ -536,7 +602,7 @@ export const AdminProducts: React.FC = () => {
     <AdminLayout>
       <div className="flex justify-between items-center mb-8">
         <h1 className="font-serif text-3xl">Products</h1>
-        <button onClick={() => { setEditing({ name: '', handle: '', price: 0, vendor: '', status: 'active', images: '', tags: '', new_arrival: false, description: '' }); setShowForm(true); }} className="bg-[#059669] text-white px-5 py-2 text-sm">+ Add Product</button>
+        <button onClick={() => { setEditing({ name: '', handle: '', price: 0, vendor: '', status: 'active', images: [], tags: '', new_arrival: false, description: '' }); setShowForm(true); }} className="bg-[#059669] text-white px-5 py-2 text-sm">+ Add Product</button>
       </div>
 
       {showForm && editing && (
@@ -567,8 +633,15 @@ export const AdminProducts: React.FC = () => {
           </div>
 
           <div className="col-span-2">
-            <label htmlFor="product-images" className="block text-sm font-semibold mb-1">Images (comma separated URLs)</label>
-            <input id="product-images" placeholder="Images (comma separated URLs)" value={Array.isArray(editing.images) ? editing.images.join(', ') : editing.images} onChange={(e) => setEditing({ ...editing, images: e.target.value })} className="border px-3 py-2 w-full" />
+            <label htmlFor="product-images" className="block text-sm font-semibold mb-1">Images</label>
+            <input id="product-images" placeholder="Paste image URLs here or upload files below" value={Array.isArray(editing.images) ? editing.images.join(', ') : editing.images} onChange={(e) => setEditing({ ...editing, images: e.target.value })} className="border px-3 py-2 w-full" />
+            <p className="text-xs text-gray-500 mt-2">You can either paste comma-separated URLs or upload files from your device. Uploaded files will be saved to Cloudinary automatically.</p>
+          </div>
+
+          <div className="col-span-2">
+            <label htmlFor="product-image-upload" className="block text-sm font-semibold mb-1">Upload from device</label>
+            <input id="product-image-upload" type="file" accept="image/*" multiple onChange={handleImageUpload} disabled={uploadingImages} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37] file:text-black hover:file:bg-[#c8a42f]" />
+            {uploadingImages && <p className="text-xs text-gray-500 mt-2">Uploading images...</p>}
           </div>
 
           <div className="col-span-2">
