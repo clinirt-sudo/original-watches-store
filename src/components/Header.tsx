@@ -60,8 +60,7 @@ const Header: React.FC = () => {
   useEffect(() => {
     supabase
       .from('ecom_products')
-      .select('vendor', { count: 'exact' })
-      .distinct('vendor')
+      .select('vendor')
       .eq('status', 'active')
       .then(({ data }) => {
         if (!data) return;
