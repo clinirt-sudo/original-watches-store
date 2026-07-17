@@ -340,6 +340,16 @@ VALUES (1, 'Original Watches Store', '', '', '', 999, '')
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================================
+-- 5b. DATA MIGRATION: Fix vendor/brand naming
+-- ============================================================================
+-- Normalize any vendor values equal to 'tem' (case-insensitive, trimmed)
+-- to the corrected brand name 'Tudor '. Run this when deploying the schema
+-- to ensure existing product rows are updated.
+UPDATE public.ecom_products
+SET vendor = 'Tudor '
+WHERE lower(trim(vendor)) = 'tem';
+
+-- ============================================================================
 -- 6. DOCUMENTATION & NOTES
 -- ============================================================================
 
